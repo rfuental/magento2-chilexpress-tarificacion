@@ -1,0 +1,22 @@
+{
+    "name": "factoria/module-chilexpress",
+    "description": "",
+    "type": "magento2-module",
+    "license": "*",
+    "authors": [
+        {
+            "email": "roberto@factoria-digital.cl",
+            "name": "Roberto Fuentealba"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Factoria\\Chilexpress\\": ""
+        }
+    }
+}
