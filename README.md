@@ -1,4 +1,4 @@
-Módulo www.factoria-digitalc.
+Módulo www.factoria-digital.cl
 
 # magento2-chilexpress-tarificacion
 
