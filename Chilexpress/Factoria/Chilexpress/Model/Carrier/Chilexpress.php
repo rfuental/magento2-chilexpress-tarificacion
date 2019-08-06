@@ -21,9 +21,15 @@ class Chilexpress extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
     
     private $stringRequestReqiones;
     
+    private $objectManager;
     
+    private $variables;
     
-
+    private $url_chilexpress;
+    
+    private $user_chilexpress;
+    
+    private $pass_chilexpress;
     /**
      * Constructor
      *
@@ -67,12 +73,21 @@ class Chilexpress extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
                                                <reqObtenerRegion/>
                                             </cor:ConsultarRegiones>
                                          </soapenv:Body></soapenv:Envelope>';
+        
+        $this->objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $this->variables = $this->objectManager->create('Magento\Variable\Model\Variable');
+        $url_chilexpress = $this->variables->loadByCode('url_chilexpress')->getPlainValue();
+        $user_chilexpress = $this->variables->loadByCode('user_chilexpress')->getPlainValue();
+        $pass_chilexpress = $this->variables->loadByCode('pass_chilexpress')->getPlainValue();
     }
     
     
 
     private function callSoap($xml, $action, $soapUrl){
-        $auth = base64_encode("UsrTester:&8vhk8790|");
+        
+        
+        
+        $auth = base64_encode($this->user_chilexpress.":".$this->pass_chilexpress);
         $headers = array(
             "Content-type: text/xml;charset=\"utf-8\"",
             "Accept: text/xml",
@@ -80,7 +95,7 @@ class Chilexpress extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
             "Pragma: no-cache",
             "SOAPAction: $action",
             "Content-length: " . strlen($xml),
-            "Authorization: Basic VXNyVGVzdFNlcnZpY2lvczpVJCR2cjIkdFMyVA=="
+            "Authorization: Basic $auth"
         ); //SOAPAction: your op URL
 
         $url = $soapUrl;
@@ -118,8 +133,6 @@ class Chilexpress extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
     public function getRegiones() {
         $soapUrl = "http://testservices.wschilexpress.com/GeoReferencia?wsdl"; // asmx URL of WSDL
         $soapAction = "http://www.chilexpress.cl/CorpGR/ConsultarRegiones";
-        $soapUser = "UsrTester";  //  username
-        $soapPassword = "&8vhk8790|"; // password
         // xml post structure
 
         $xml_post_string = $this->stringRequestReqiones;
@@ -130,9 +143,7 @@ class Chilexpress extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
     public function getCodigoRegion($nombreRegion) {
         $soapUrl = "http://testservices.wschilexpress.com/GeoReferencia?wsdl"; // asmx URL of WSDL
         $soapAction = "http://www.chilexpress.cl/CorpGR/ConsultarRegiones";
-        $soapUser = "UsrTester";  //  username
-        $soapPassword = "&8vhk8790|"; // password
-
+        
         $xml_post_string = $this->stringRequestReqiones;
         $response =  $this->callSoap($xml_post_string, $soapAction, $soapUrl);
         unset($response['ConsultarRegionesResponse']['respObtenerRegion']['CodEstado']);
@@ -190,6 +201,12 @@ class Chilexpress extends \Magento\Shipping\Model\Carrier\AbstractCarrier implem
     }
     
     public function valorarEnvio($alto, $ancho, $largo, $peso, $comunaDestino , $idTransaccion = 0, $comunaOrinen = false){
+        
+        $variables = $this->objectManager->create('Magento\Variable\Model\Variable');
+        $user_chilexpress = $variables->loadByCode('user_chilexpress')->getPlainValue();
+        $pass_chilexpress = $variables->loadByCode('pass_chilexpress')->getPlainValue();
+        $url_chilexpress = $variables->loadByCode('url_chilexpress')->getPlainValue();
+        
         $soapUrl = "http://testservices.wschilexpress.com/TarificarCourier?wsdl"; // asmx URL of WSDL
         $soapAction = "http://www.chilexpress.cl/TarificaCourier/TarificarCourier";
         $soapUser = "UsrTester";  //  username
